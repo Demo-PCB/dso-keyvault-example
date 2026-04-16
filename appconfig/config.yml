@@ -1,0 +1,6 @@
+version: 1.0.0
+
+dev:
+  resourceName: aconeu2c011dsosbnx001
+uat:
+  resourceName: aconeu2c011dsosbnx001

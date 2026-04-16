@@ -1,0 +1,72 @@
+# =====================================================
+# Caller Workflow: CD DEV - Azure Key Vault
+# =====================================================
+# Deploys configuration to the DEV environment.
+# Triggers:
+# 1. Automatically when CI workflow completes successfully on main branch
+# 2. Manual trigger via workflow_dispatch with specified version
+#
+# Prerequisites:
+# - CI workflow must have run and published artifacts
+# - Azure OIDC credentials configured for DEV environment
+# =====================================================
+
+name: CD - KeyVault (DEV)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Artifact version to deploy (e.g., 1.0.0-42 from CI job summary)'
+        required: false
+        type: string
+  workflow_run:
+    workflows: ['CI - KeyVault']
+    types: [completed]
+    branches: [main]
+
+# Prevent concurrent deployments to DEV
+concurrency:
+  group: cd-keyvault-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+  issues: write
+  actions: write
+  security-events: write
+
+jobs:
+  deploy-dev:
+    name: Deploy to DEV
+    uses: ibkpe-platform-org/dso-keyvault-reusable/.github/workflows/_cd-keyvault-dev.yml@main
+    with:
+      application: 'dso'
+      component-name: 'dso-keyvault-example'
+      
+      # Required: Version to deploy (from workflow_dispatch input or CI artifact)
+      version: ${{ github.event.inputs.version || github.event.workflow_run.outputs.artifact_version }}
+      
+      # Optional: Component name (defaults to repository name)
+      # component-name: 'my-component'
+      
+      # Optional: Content type for values (default: 'application/json')
+      # content-type: 'application/json'
+      
+      # Optional: Label for configuration keys
+      # label: 'dev'
+      
+      # Optional: Prefix for all imported keys
+      # prefix: 'MyApp/'
+      
+      # Optional: Separator for flattening nested JSON (default: ':')
+      # separator: ':'
+      
+      # Optional: Perform dry run only without actual import (default: false)
+      # FLAG_DRY_RUN_ONLY: false
+
+      # Optional: Azure auth mode ('OIDC' default or 'IDENTITY' for managed identity on self-hosted Azure runner)
+      # azure-auth-type: 'IDENTITY'
+    secrets: inherit
