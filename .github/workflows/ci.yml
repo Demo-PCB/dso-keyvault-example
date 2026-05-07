@@ -48,7 +48,7 @@ jobs:
   ci:
     name: Build and Package
     # Reference format: {org}/{reusable-repo}/.github/workflows/{workflow-file}@{ref}
-    uses: armedinag/dso-keyvault-reusable/.github/workflows/_ci-keyvault.yml@main
+    uses: Demo-PCB/dso-keyvault-reusable/.github/workflows/_ci-keyvault.yml@main
     with:
       application: 'dso'
       component-name: 'dso-keyvault-example'
