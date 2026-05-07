@@ -1,4 +1,5 @@
 {
-  "ApiUrl": "https://api.example.com",
-  "NewFeature": true
+  "ApiUrl": "DEMO",
+  "DbPassword": "DEMO",
+  "JwtSecret": "DEMO"
 }

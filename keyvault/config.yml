@@ -1,6 +1,7 @@
 version: 1.0.0
 
 dev:
-  resourceName: aconeu2c011dsosbnx001
+  keyvault-name: kv-devsecops-carlos
+  resource-group: rg-devsecops-lab
 uat:
   resourceName: aconeu2c011dsosbnx001
