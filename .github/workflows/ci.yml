@@ -14,21 +14,21 @@ on:
       - 'keyvault/data.json'
       - 'keyvault/config.yml'
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment'
-        required: true
-        default: dev
-        type: choice
-        options:
-          - dev
-          - uat
-          - prd
-      dry-run:
-        description: 'Only preview changes without creating secrets'
-        required: true
-        default: false
-        type: boolean
+    # inputs:
+    #   environment:
+    #     description: 'Target environment'
+    #     required: true
+    #     default: dev
+    #     type: choice
+    #     options:
+    #       - dev
+    #       - uat
+    #       - prd
+    #   dry-run:
+    #     description: 'Only preview changes without creating secrets'
+    #     required: true
+    #     default: false
+    #     type: boolean
 
 concurrency:
   group: keyvault-${{ github.ref }}
