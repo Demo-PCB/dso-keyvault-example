@@ -1,5 +1,7 @@
 {
   "ApiUrl": "DEMO",
   "DbPassword": "DEMO",
-  "JwtSecret": "DEMO"
+  "JwtSecret": "DEMO2",
+  "Scprueba1": "DEMO",
+  "Scprueba2": "DEMO"
 }
