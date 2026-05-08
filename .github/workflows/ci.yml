@@ -1,19 +1,3 @@
-# =====================================================
-# Caller Workflow: CI - Azure Key Vault
-# =====================================================
-# This is an example caller workflow for consuming repositories.
-# Copy this file to your repository's .github/workflows/ directory.
-#
-# Triggers:
-# - Automatically on push/PR to main when keyvault files change
-# - Manual trigger via workflow_dispatch
-#
-# Prerequisites:
-# - keyvault/data.json file with key-value configuration
-# - keyvault/config.yml file with version and environment configs
-# - Repository secrets configured (see README)
-# =====================================================
-
 name: CI - Key Vault
 
 on:
@@ -30,41 +14,38 @@ on:
       - 'keyvault/data.json'
       - 'keyvault/config.yml'
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - uat
+          - prd
+      dry-run:
+        description: 'Only preview changes without creating secrets'
+        required: true
+        default: false
+        type: boolean
 
-# Prevent concurrent CI runs on the same branch
 concurrency:
-  group: ci-keyvault-${{ github.ref }}
+  group: keyvault-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
-  attestations: write
-  issues: write
-  actions: write
-  security-events: write
 
 jobs:
-  ci:
-    name: Build and Package
-    # Reference format: {org}/{reusable-repo}/.github/workflows/{workflow-file}@{ref}
+  update-keyvault:
+    name: Update Azure Key Vault
     uses: Demo-PCB/dso-keyvault-reusable/.github/workflows/_ci-keyvault.yml@main
     with:
-      application: 'dso'
-      component-name: 'dso-keyvault-example'
-      
-      # Optional: Path to data.json file (default: 'data.json')
-      # data-file-path: 'config/data.json'
-      
-      # Optional: Path to config.yml file (default: 'config.yml')
-      # config-file-path: 'config/config.yml'
-      
-      # Optional: Enable/disable schema validation (default: true)
-      # FLAG_RUN_SCHEMA_VALIDATION: true
-      
-      # Optional: Enable/disable secret scanning (default: true)
-      # FLAG_RUN_SECRET_SCAN: true
-      
-      # Optional: Enable/disable publishing to Artifactory (default: true)
-      # FLAG_PUBLISH_ARTIFACTS: true
+      environment: ${{ inputs.environment || 'dev' }}
+      data-file-path: keyvault/data.json
+      config-file-path: keyvault/config.yml
+      initial-secret-value: DEMO
+      dry-run: ${{ inputs.dry-run || false }}
     secrets: inherit
